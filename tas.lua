@@ -7,6 +7,7 @@ tas.hud_w = 48
 tas.hud_h = 0
 tas.scale = 6
 tas.pianoroll_w=65
+tas.hide_all_input_display = false
 
 local keymap_names = {
 	[0] = {
@@ -431,8 +432,11 @@ function tas:draw_button(x,y,i)
 	love.graphics.rectangle("fill", x, y, 3, 3)
 end
 
-function tas:show_second_input_display()
-	for i = 8, 16 do
+function tas:show_input_display(player)
+	if self.hide_all_input_display then
+		return false
+	end
+	for i = 0 + player * 8, 8 + player * 8 do
 		if self.pianoroll_inputs[i] then
 			return true
 		end
@@ -441,8 +445,10 @@ function tas:show_second_input_display()
 end
 function tas:draw_input_display(x,y,player)
 	if not player then
-		self:draw_input_display(x, y, 0)
-		if self:show_second_input_display() then
+		if self:show_input_display(0) then
+			self:draw_input_display(x, y, 0)
+		end
+		if self:show_input_display(1) then
 			self:draw_input_display(x, y + 12, 1)
 		end
 		return
@@ -724,12 +730,15 @@ function tas:keypressed(key, isrepeat)
 			self:push_undo_state() -- TODO: may not be desired
 			self:set_mouse(mouse_x, mouse_y, mask)
 		end
-	else
+	elseif key == 'f11' then
+		self.hide_all_input_display = not self.hide_all_input_display
+	elseif not (love.keyboard.isDown('lalt', 'ralt') or ctrl) then
+		-- TODO: improve check for modifier absence
 		for p = 0, 1 do
 			for i = 0, #pico8.keymap[p] do
 				for _, testkey in pairs(pico8.keymap[p][i]) do
 					if key == testkey  and not isrepeat then
-						if (p ~= 0 or i >= 6) and ctrl and love.keyboard.isDown("lshift", "rshift") then
+						if ctrl and love.keyboard.isDown("lshift", "rshift") then
 							-- toggle piano roll display
 							if self.pianoroll_inputs[i + p * 8 + 1] then
 								self.pianoroll_inputs[i + p * 8 + 1] = nil
