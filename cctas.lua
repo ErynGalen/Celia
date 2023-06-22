@@ -7,6 +7,7 @@ local api = require("api")
 
 local console = require("console")
 
+cctas.show_hitbox = true
 
 --TODO: probably call load_level directly
 --or at least make sure rng seeds are set etc
@@ -182,6 +183,8 @@ function cctas:keypressed(key, isrepeat)
 		if p then
 			love.system.setClipboardText(tostring(p))
 		end
+	elseif key == 'h' then
+		self.show_hitbox = not self.show_hitbox
 	else
 		self.super.keypressed(self,key,isrepeat)
 	end
@@ -701,6 +704,25 @@ function cctas:offset_camera()
 	love.graphics.setScissor(self.hud_w*self.scale,self.hud_h*self.scale,pico8.resolution[1]*self.scale, pico8.resolution[2]*self.scale)
 end
 
+function cctas:draw_hitbox(x, y)
+	if not self.show_hitbox then
+		return
+	end
+	local old_r, old_g, old_b, old_a = love.graphics.getColor()
+	setPicoColor(11)
+	for _, obj in pairs(pico8.cart.objects) do
+		if obj.type == pico8.cart.player or obj.type == pico8.cart.balloon or obj.type == pico8.cart.fruit or obj.type == pico8.cart.fly_fruit then
+			love.graphics.rectangle("line",
+				obj.hitbox.x + math.floor(obj.x) + x + 0.5,
+				obj.hitbox.y + math.floor(obj.y) + y + 0.5,
+				obj.hitbox.w - 1,
+				obj.hitbox.h - 1
+			)
+		end
+	end
+	love.graphics.setColor(old_r, old_g, old_b, old_a)
+end
+
 function cctas:draw()
 	self.super.draw(self)
 	local offset = 13
@@ -709,6 +731,8 @@ function cctas:draw()
 	end
 
 	love.graphics.print(self:hud(),1,offset,0,2/3,2/3)
+
+	self:draw_hitbox(self.hud_w, self.hud_h)
 
 	if self.modify_loading_jank then
 		love.graphics.push()
@@ -741,7 +765,6 @@ function cctas:draw()
 		love.graphics.setScissor()
 		love.graphics.print("rng manip mode",1,100,0,2/3,2/3)
 	end
-
 end
 
 return cctas

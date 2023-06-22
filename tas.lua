@@ -647,7 +647,6 @@ function tas:draw()
 	love.graphics.draw(pico8.screen, self.hud_w, self.hud_h, 0)
 	love.graphics.setShader()
 
-
 	-- tas tool ui drawing here
 
 	local frame_count_width = self:draw_frame_counter(1,1)
