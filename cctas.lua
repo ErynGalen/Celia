@@ -699,23 +699,27 @@ function cctas:draw_hitbox(x, y)
 	if not self.show_hitbox then
 		return
 	end
-	local p = self:find_player()
-	if p then
-		local old_r, old_g, old_b, old_a = love.graphics.getColor()
-		setPicoColor(11)
-		love.graphics.rectangle("line", p.x + x + 1, p.y + y + 3, 5, 4)
-		love.graphics.setColor(old_r, old_g, old_b, old_a)
+	local old_r, old_g, old_b, old_a = love.graphics.getColor()
+	setPicoColor(11)
+	for _, obj in pairs(pico8.cart.objects) do
+		if obj.type == pico8.cart.player or obj.type == pico8.cart.balloon or obj.type == pico8.cart.fruit or obj.type == pico8.cart.fly_fruit then
+			love.graphics.rectangle("line",
+				obj.hitbox.x + math.floor(obj.x) + x + 0.5,
+				obj.hitbox.y + math.floor(obj.y) + y + 0.5,
+				obj.hitbox.w - 1,
+				obj.hitbox.h - 1
+			)
+		end
 	end
-end
-
-function cctas:special_draw_pico8(x, y)
-	self:draw_hitbox(x, y)
+	love.graphics.setColor(old_r, old_g, old_b, old_a)
 end
 
 function cctas:draw()
 	self.super.draw(self)
 
 	love.graphics.print(self:hud(),1,13,0,2/3,2/3)
+
+	self:draw_hitbox(self.hud_w, self.hud_h)
 
 	if self.modify_loading_jank then
 		love.graphics.push()
