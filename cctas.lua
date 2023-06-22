@@ -183,6 +183,8 @@ function cctas:keypressed(key, isrepeat)
 		if p then
 			love.system.setClipboardText(tostring(p))
 		end
+	elseif key == 'h' then
+		self.show_hitbox = not self.show_hitbox
 	else
 		self.super.keypressed(self,key,isrepeat)
 	end
