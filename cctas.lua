@@ -7,6 +7,7 @@ local api = require("api")
 
 local console = require("console")
 
+cctas.show_hitbox = true
 
 --TODO: probably call load_level directly
 --or at least make sure rng seeds are set etc
@@ -694,6 +695,23 @@ function cctas:offset_camera()
 	love.graphics.setScissor(self.hud_w*self.scale,self.hud_h*self.scale,pico8.resolution[1]*self.scale, pico8.resolution[2]*self.scale)
 end
 
+function cctas:draw_hitbox(x, y)
+	if not self.show_hitbox then
+		return
+	end
+	local p = self:find_player()
+	if p then
+		local old_r, old_g, old_b, old_a = love.graphics.getColor()
+		setPicoColor(11)
+		love.graphics.rectangle("line", p.x + x + 1, p.y + y + 3, 5, 4)
+		love.graphics.setColor(old_r, old_g, old_b, old_a)
+	end
+end
+
+function cctas:special_draw_pico8(x, y)
+	self:draw_hitbox(x, y)
+end
+
 function cctas:draw()
 	self.super.draw(self)
 
@@ -730,7 +748,6 @@ function cctas:draw()
 		love.graphics.setScissor()
 		love.graphics.print("rng manip mode",1,100,0,2/3,2/3)
 	end
-
 end
 
 return cctas

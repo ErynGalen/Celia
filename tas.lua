@@ -443,6 +443,9 @@ function tas:draw()
 	love.graphics.draw(pico8.screen, self.hud_w, self.hud_h, 0)
 	love.graphics.setShader()
 
+	if self.special_draw_pico8 then
+		self:special_draw_pico8(self.hud_w + 0.5, self.hud_h + 0.5)
+	end
 
 	-- tas tool ui drawing here
 
@@ -458,6 +461,10 @@ end
 function tas:draw_gif_overlay()
 	local frame_count_width = self:draw_frame_counter(1,1)
 	self:draw_input_display(1+frame_count_width+1,1)
+
+	if self.special_draw_pico8 then
+		self:special_draw_pico8(0.5, 0.5)
+	end
 end
 
 function tas:keypressed(key, isrepeat)
