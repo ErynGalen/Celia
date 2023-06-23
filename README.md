@@ -64,6 +64,7 @@ On the right, you'll see the pianoroll, which shows the inputs in the frames aro
 * __F4__ - stop gif recording
 * __F6__ - take screenshot
 * __Ctrl + R__ - reload cart and tas tool (Warning: this cannot be undone!)
+* __H__ - toggle hitboxes. When the cart defines `objects`, each of the objects having a `hitbox` field will have a green outline showing its hitbox.
 
 ### Visual selection mode
 Visual selection mode allows you to perform operations on a contiguous range of inputs. The selected range will always start with the current frame (highlighted blue on the piano roll), and contain all subsequent frames (highlighted gray). You can always exit visual selection mode, by making the selection empty, or pressing __ESC__.

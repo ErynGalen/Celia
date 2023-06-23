@@ -7,6 +7,7 @@ tas.hud_w = 48
 tas.hud_h = 0
 tas.scale = 6
 tas.pianoroll_w=65
+tas.show_hitbox = true
 
 
 --wrapper functions
@@ -430,6 +431,33 @@ function tas:draw_piano_roll()
 	end
 
 end
+
+function tas:draw_hitbox(x, y)
+	if not self.show_hitbox or not pico8.cart.objects then
+		return
+	end
+	local old_r, old_g, old_b, old_a = love.graphics.getColor()
+	setPicoColor(11)
+	for _, obj in pairs(pico8.cart.objects) do
+		if obj.hitbox ~= nil then
+			if obj.type ~= nil and
+			(obj.type == pico8.cart.player
+			or obj.type == pico8.cart.balloon
+			or obj.type == pico8.cart.fruit
+			or obj.type == pico8.cart.fly_fruit)
+			then
+				love.graphics.rectangle("line",
+					obj.hitbox.x + math.floor(obj.x) + x + 0.5,
+					obj.hitbox.y + math.floor(obj.y) + y + 0.5,
+					obj.hitbox.w - 1,
+					obj.hitbox.h - 1
+				)
+			end
+		end
+	end
+	love.graphics.setColor(old_r, old_g, old_b, old_a)
+end
+
 function tas:draw()
 	love.graphics.setColor(1,1,1,1)
 	love.graphics.setCanvas(tas.screen)
@@ -445,6 +473,8 @@ function tas:draw()
 
 	-- tas tool ui drawing here
 
+	self:draw_hitbox(self.hud_w, self.hud_h)
+
 	local frame_count_width = self:draw_frame_counter(1,1)
 	self:draw_input_display(1+frame_count_width+1,1)
 
@@ -457,6 +487,7 @@ end
 function tas:draw_gif_overlay()
 	local frame_count_width = self:draw_frame_counter(1,1)
 	self:draw_input_display(1+frame_count_width+1,1)
+	self:draw_hitbox(0, 0)
 end
 
 function tas:keypressed(key, isrepeat)
@@ -513,6 +544,8 @@ function tas:keypressed(key, isrepeat)
 		else
 			self:preform_undo()
 		end
+	elseif key == 'h' then
+		self.show_hitbox = not self.show_hitbox
 	else
 		for i = 0, #pico8.keymap[0] do
 			for _, testkey in pairs(pico8.keymap[0][i]) do
