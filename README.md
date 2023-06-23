@@ -1,3 +1,9 @@
+> **Note**
+> This branch (`merge-all-features`) is used to gather the features brought by all the branches of this repo.
+> Its history isn't clean because many branches are going to be merged several times with it.
+>
+> The `master` branch isn't used for this purpose, in order to keep it clean and coherent with upstream.
+
 Celia
 --------
 
