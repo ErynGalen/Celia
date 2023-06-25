@@ -440,15 +440,14 @@ function tas:draw_hitbox(x, y)
 	setPicoColor(11)
 	for _, obj in pairs(pico8.cart.objects) do
 		if obj.hitbox ~= nil then
-			if obj.type ~= nil and
-			(obj.type == pico8.cart.player
-			or obj.type == pico8.cart.balloon
-			or obj.type == pico8.cart.fruit
-			or obj.type == pico8.cart.fly_fruit)
+			if obj.type ~= nil
+			and obj.type ~= pico8.cart.particles
+			and obj.type ~= pico8.cart.player_spawn
+			and obj.type ~= pico8.cart.smoke
 			then
 				love.graphics.rectangle("line",
-					obj.hitbox.x + math.floor(obj.x) + x + 0.5,
-					obj.hitbox.y + math.floor(obj.y) + y + 0.5,
+					obj.hitbox.x + obj.x + x + 0.5,
+					obj.hitbox.y + obj.y + y + 0.5,
 					obj.hitbox.w - 1,
 					obj.hitbox.h - 1
 				)
