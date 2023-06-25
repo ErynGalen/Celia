@@ -650,8 +650,8 @@ function tas:draw_hitbox(x, y)
 			and obj.type ~= pico8.cart.smoke
 			then
 				love.graphics.rectangle("line",
-					obj.hitbox.x + obj.x + x + 0.5,
-					obj.hitbox.y + obj.y + y + 0.5,
+					obj.hitbox.x + obj.x + x - pico8.camera_x + 0.5,
+					obj.hitbox.y + obj.y + y - pico8.camera_y + 0.5,
 					obj.hitbox.w - 1,
 					obj.hitbox.h - 1
 				)
