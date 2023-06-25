@@ -85,7 +85,10 @@ To toggle the display of an input in the piano roll, you can press __Ctrl + Shif
 If any of the input of the second player is displayed in the piano roll, a second input display will be shown under the first one on the left hand side of the screen, showing the inputs for the second player.
 
 ### Mouse input
-* __Ctrl + Shift + Space__ - enables or disables the mouse. If the cart calls `poke(0x5f2d, 1)` in its `_init()` to request the mouse, the tastool starts with the mouse already enabled.
+* __Ctrl + Shift + Space__ - enables or disables the mouse. If the cart calls `poke(0x5f2d, 1)` in its `_init()` or at top level to request the mouse, the tastool starts with the mouse already enabled.
+
+> **Warning**
+> The mouse inputs are only saved when the mouse is enabled in the cart by calling `poke(0x5f2d, 1)`.
 
 The mouse input display indicates:
 * "__x: ..., y: ...__" - the mouse position for the current frame. This line turns red when __Space__ is pressed. See below for more informations.
