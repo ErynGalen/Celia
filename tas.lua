@@ -7,7 +7,7 @@ tas.hud_w = 48
 tas.hud_h = 0
 tas.scale = 6
 tas.pianoroll_w=65
-tas.show_hitbox = true
+tas.show_hitbox = false
 
 
 --wrapper functions
