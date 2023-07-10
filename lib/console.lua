@@ -65,7 +65,7 @@ console.TEXT_COLOR = {1, 1, 1, 1}
 console.COMPLETION_TEXT_COLOR = {1, 1, 1, 0.4}
 console.ERROR_COLOR = {1, 0, 0, 1}
 
-console.FONT_SIZE = 12
+console.FONT_SIZE = 18
 console.FONT = love.graphics.newFont(console.FONT_SIZE)
 
 -- The scope in which lines in the console are executed.
