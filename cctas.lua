@@ -34,7 +34,7 @@ function cctas:init()
 	self.super.init(self)
 
 
-	rawset(console.ENV,"find_player", self.find_player)
+	console.ENV.find_player = self.find_player
 
 	self.prev_obj_count=0
 	self.modify_loading_jank=false
@@ -404,6 +404,13 @@ end
 function cctas:step()
 	local lvl_idx=self:level_index()
 	self.super.step(self)
+
+	local p = self:find_player()
+	if p then
+		console.ENV.p = p
+	else
+		console.ENV.p = nil
+	end
 
 	if lvl_idx~=self:level_index() then
 		if self.full_game_playback then
