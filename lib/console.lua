@@ -65,7 +65,7 @@ console.TEXT_COLOR = {1, 1, 1, 1}
 console.COMPLETION_TEXT_COLOR = {1, 1, 1, 0.4}
 console.ERROR_COLOR = {1, 0, 0, 1}
 
-console.FONT_SIZE = 12
+console.FONT_SIZE = 18
 console.FONT = love.graphics.newFont(console.FONT_SIZE)
 
 -- The scope in which lines in the console are executed.
@@ -142,6 +142,8 @@ end
 
 -- Store global state for whether or not the console is enabled / disabled.
 local enabled = false
+-- if the console has been enabled by pressing T, ignore this input
+local ignore_next_input = false
 function console.isEnabled() return enabled end
 
 -- Store the printed lines in a buffer.
@@ -364,6 +366,9 @@ function console.textinput(input)
   local ctrl=love.keyboard.isDown("lctrl","lgui","rctrl","rgui")
   if not enabled then
     return
+  elseif ignore_next_input then
+    ignore_next_input = false
+    return
   elseif (input == "=" or input=="+") and ctrl then
       console.FONT_SIZE = console.FONT_SIZE + 1
       console.FONT = love.graphics.newFont(console.FONT_SIZE)
@@ -414,8 +419,17 @@ function console.keypressed(key, scancode, isrepeat)
   local shift = love.keyboard.isDown("lshift")
   local alt = love.keyboard.isDown("lalt")
 
-  if ctrl and key == "t" then
-    enabled = not enabled
+  if enabled then
+    if ctrl and key == "t" then
+      enabled = false
+    end
+  else
+    if key == "t" then
+      enabled = true
+      if not ctrl then
+        ignore_next_input = true
+      end
+    end
   end
   -- Ignore if the console isn't enabled.
   if not enabled then return end
