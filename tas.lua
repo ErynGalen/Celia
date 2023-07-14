@@ -642,6 +642,14 @@ function tas:draw_hitbox(x, y)
 	end
 	local old_r, old_g, old_b, old_a = love.graphics.getColor()
 	setPicoColor(11)
+	local off_x, off_y
+	if pico8.cart.draw_x and pico8.cart.draw_y then
+		off_x = pico8.cart.draw_x
+		off_y = pico8.cart.draw_y
+	else
+		off_x = pico8.camera_x
+		off_y = pico8.camera_y
+	end
 	for _, obj in pairs(pico8.cart.objects) do
 		if obj.hitbox ~= nil then
 			if obj.type ~= nil
@@ -650,8 +658,8 @@ function tas:draw_hitbox(x, y)
 			and obj.type ~= pico8.cart.smoke
 			then
 				love.graphics.rectangle("line",
-					obj.hitbox.x + obj.x + x - pico8.camera_x + 0.5,
-					obj.hitbox.y + obj.y + y - pico8.camera_y + 0.5,
+					obj.hitbox.x + obj.x + x - off_x + 0.5,
+					obj.hitbox.y + obj.y + y - off_y + 0.5,
 					obj.hitbox.w - 1,
 					obj.hitbox.h - 1
 				)
