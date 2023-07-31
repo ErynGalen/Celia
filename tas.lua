@@ -462,11 +462,16 @@ function tas:draw_hitbox(x, y, for_recording)
 					obj.hitbox.h - 1
 				)
 				if (not for_recording) and love.keyboard.isDown('lctrl', 'rctrl') then -- draw object names
-					setPicoColor(3)
-					local obj_name = "..."
+					setPicoColor(10)
+					local font = love.graphics.getFont()
+					local name_text_scale = 0.7
 					for name, type in pairs(pico8.cart) do
 						if type == obj.type then
-							love.graphics.print(name, obj.x + x - off_x, obj.y + y - off_y)
+							love.graphics.print(name,
+								obj.x + x - off_x + obj.hitbox.x - font:getWidth(name) * name_text_scale / 2,
+								obj.y + y - off_y + obj.hitbox.y - font:getHeight() * name_text_scale,
+								0, name_text_scale, name_text_scale
+							)
 						end
 					end
 				end
