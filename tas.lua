@@ -8,6 +8,8 @@ tas.hud_h = 0
 tas.scale = 6
 tas.pianoroll_w=65
 tas.hide_all_input_display = false
+
+-- hitbox extension
 tas.show_hitbox = false
 
 local keymap_names = {
@@ -636,12 +638,11 @@ function tas:draw_mouse_hud(x, y, for_recording)
 	end
 end
 
-function tas:draw_hitbox(x, y)
+function tas:draw_hitbox(x, y, for_recording)
 	if not self.show_hitbox or not pico8.cart.objects then
 		return
 	end
 	local old_r, old_g, old_b, old_a = love.graphics.getColor()
-	setPicoColor(11)
 	local off_x, off_y
 	if pico8.cart.draw_x and pico8.cart.draw_y then
 		off_x = pico8.cart.draw_x
@@ -657,12 +658,22 @@ function tas:draw_hitbox(x, y)
 			and obj.type ~= pico8.cart.player_spawn
 			and obj.type ~= pico8.cart.smoke
 			then
+				setPicoColor(11)
 				love.graphics.rectangle("line",
 					obj.hitbox.x + obj.x + x - off_x + 0.5,
 					obj.hitbox.y + obj.y + y - off_y + 0.5,
 					obj.hitbox.w - 1,
 					obj.hitbox.h - 1
 				)
+				if (not for_recording) and love.keyboard.isDown('lctrl', 'rctrl') then -- draw object names
+					setPicoColor(3)
+					local obj_name = "..."
+					for name, type in pairs(pico8.cart) do
+						if type == obj.type then
+							love.graphics.print(name, obj.x + x - off_x, obj.y + y - off_y)
+						end
+					end
+				end
 			end
 		end
 	end
@@ -700,7 +711,7 @@ end
 function tas:draw_gif_overlay()
 	local frame_count_width = self:draw_frame_counter(1,1)
 	self:draw_input_display(1+frame_count_width+1,1)
-	self:draw_hitbox(0, 0)
+	self:draw_hitbox(0, 0, true)
 	self:draw_mouse_hud(1, 128 - 11, true)
 end
 

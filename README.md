@@ -71,7 +71,7 @@ On the right, you'll see the pianoroll, which shows the inputs in the frames aro
 * __F6__ - take screenshot
 * __Ctrl + R__ - reload cart and tas tool (Warning: this cannot be undone!)
 * __F11__ - hide/show the input overlay (both in the TAS tool and the GIF recordings)
-* __H__ - toggle hitboxes. When the cart defines `objects`, each of the objects having a `hitbox` field will have a green outline showing its hitbox.
+* __H__ - toggle hitboxes. When the cart defines `objects`, each of the objects having a `hitbox` field will have a green outline showing its hitbox. Additionally, when hitboxes are enabled, you can hold __Ctrl__ to show the object names.
 
 
 #### Second player inputs
