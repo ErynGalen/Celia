@@ -106,7 +106,7 @@ pico8 = {
 	mouse_x = 0, 
 	mouse_y = 0,
 	mouse_mask = 0,
-	mouse_enabled = false
+	mouse_enabled = false,
 	rng_low = 0,
 	rng_high = 0,
 }
