@@ -6,11 +6,15 @@ local QueueableSource = require("QueueableSource")
 
 local bit = require("bit")
 
+fixed_point_enabled=false
+
 local api = require("api")
 local cart = require("cart")
+local fix32=require("fix32")
 
 local tas = require("tas")
 local cctas = require("cctas")
+local cc2tas = require("cc2tas")
 
 local console = require("console")
 
@@ -103,6 +107,8 @@ pico8 = {
 	mouse_y = 0,
 	mouse_mask = 0,
 	mouse_enabled = false
+	rng_low = 0,
+	rng_high = 0,
 }
 pico8_glyphs = { [0] = "\0",
 	"¹", "²", "³", "⁴", "⁵", "⁶", "⁷", "⁸", "\t", "\n", "ᵇ",
@@ -429,6 +435,7 @@ vec4 effect(vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords) 
 	local paramcount = 0
 
 	local tas_tools = {
+		cc2tas = cc2tas,
 		cctas = cctas,
 		tas = tas
 	}
@@ -522,6 +529,9 @@ vec4 effect(vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords) 
 			elseif argv[argpos] == "--test" then -- picolove commands
 				paramcount = 0
 				require("test")
+			elseif argv[argpos] == "--fixp" then
+				paramcount = 0
+				fix32.init()
 			elseif tas_tools[argv[argpos]] and tas_tool_name == nil then
 				paramcount = 0
 				tas_tool_name = argv[argpos]

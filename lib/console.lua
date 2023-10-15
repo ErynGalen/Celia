@@ -52,6 +52,12 @@ local function concat(...)
   return tbl
 end
 
+local function pack(...)
+  local t={...}
+  t.n=select("#",...)
+  return t
+end
+
 console.HORIZONTAL_MARGIN = 10 -- Horizontal margin between the text and window.
 console.VERTICAL_MARGIN = 10 -- Vertical margins between components.
 console.PROMPT = "> " -- The prompt symbol.
@@ -132,11 +138,15 @@ end
 
 -- Overrideable function that is used for formatting return values.
 console.INSPECT_FUNCTION = function(...)
-  local args = {...}
-  if #args == 0 then
-    return "nil"
+  local args=pack(...)
+  if args.n == 0 then
+    return "",false
   else
-    return table.concat(map(args, console.inspect), "\t")
+    local inspects={}
+    for i=1, args.n do
+      inspects[i]=console.inspect(args[i])
+    end
+    return table.concat(inspects, "\t"),true
   end
 end
 
@@ -380,6 +390,7 @@ function console.textinput(input)
   end
 end
 
+
 function console.execute(command)
   -- If this is a builtin command, execute it and return immediately.
   if console.COMMANDS[command] then
@@ -390,17 +401,27 @@ function console.execute(command)
   -- Reprint the command + the prompt string.
   print(console.PROMPT .. command)
 
-  local chunk, error = load("return " .. command)
-  if not chunk then
-    chunk, error = load(command)
-  end
+  --patch pico-8 syntax
+  local status,error=pcall(patch_lua,"return ".. command, true)
 
+  if not status then
+    status, error = pcall(patch_lua, command, true)
+  end
+  local chunk
+  if status then
+    local patched_command = error
+    chunk, error=load(patched_command)
+  end
   if chunk then
+    rawset(console.ENV,"_ENV",console.ENV)
     setfenv(chunk, console.ENV)
-    local values = { pcall(chunk) }
+    local values = pack(pcall(chunk))
     if values[1] then
       table.remove(values, 1)
-      print(console.INSPECT_FUNCTION(unpack(values)))
+      local output, nonempty=console.INSPECT_FUNCTION(unpack(values,1,values.n-1))
+      if nonempty then
+        print(output)
+      end
 
       -- Bind '_' to the first returned value, and bind 'last' to a list
       -- of returned values.
