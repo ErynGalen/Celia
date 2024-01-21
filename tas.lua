@@ -655,6 +655,19 @@ end
 --i is the index to insert the inputs at
 --if i is nil, the current inputs will be replaced by the new ones
 function tas:load_input_str(input_str, i)
+	local new = ""
+	local in_comment = false
+	for i = 1, #input_str do
+		local c = input_str:sub(i, i)
+		if in_comment and (c == '\n' or c == '\r') then
+			in_comment = false
+		elseif c == '#' then
+			in_comment = true
+		elseif c ~= '\n' and c ~= '\r' then
+			new = new .. c
+		end
+	end
+	input_str = new
 	local new_inputs={}
 	for input in input_str:gmatch("[^,]+") do
 		if tonumber(input) == nil then
