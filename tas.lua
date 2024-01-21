@@ -989,12 +989,24 @@ function tas:load_input_str(input_str, i)
 	local in_comment = false
 	for i = 1, #input_str do
 		local c = input_str:sub(i, i)
-		if in_comment and (c == '\n' or c == '\r') then
-			in_comment = false
+		if in_comment then
+			if c == '\n' or c == '\r' then
+				in_comment = false
+			end
 		elseif c == '#' then
 			in_comment = true
-		elseif c ~= '\n' and c ~= '\r' then
+		else
 			new = new .. c
+		end
+	end
+	input_str = new
+	local new_inputs={}
+	for input in input_str:gmatch("[^,]+") do
+		if tonumber(input) == nil then
+			print("invalid input file")
+			return
+		else
+			table.insert(new_inputs, tonumber(input))
 		end
 	end
 	input_str = new
