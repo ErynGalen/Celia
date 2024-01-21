@@ -655,13 +655,15 @@ end
 --i is the index to insert the inputs at
 --if i is nil, the current inputs will be replaced by the new ones
 function tas:load_input_str(input_str, i)
+	input_str = input_str:gsub("#[^\n\r]*", "") -- remove comments
 	local new_inputs={}
 	for input in input_str:gmatch("[^,]+") do
-		if tonumber(input) == nil then
+		local keys = input:match("%d+")
+		if tonumber(keys) == nil then
 			print("invalid input file")
 			return
 		else
-			table.insert(new_inputs, tonumber(input))
+			table.insert(new_inputs, tonumber(keys))
 		end
 	end
 	if i == nil then

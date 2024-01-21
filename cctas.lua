@@ -643,18 +643,19 @@ end
 function cctas:get_input_str(i,j, include_seeds)
 	--only include the seeds in the string for a full level input
 	if i ~= nil and not include_seeds then
-		return self.super.get_input_str(self,i,j)
+		return ("# %s\n%s"):format(cartname, self.super.get_input_str(self,i,j))
 	end
-	return ("[%s]%s"):format(table.concat(self:get_rng_seeds(),","),self.super.get_input_str(self,i,j))
+	return ("# %s\n[%s]%s"):format(cartname, table.concat(self:get_rng_seeds(),","),self.super.get_input_str(self,i,j))
 end
 
 function cctas:load_input_str(str, i)
+	str = str:gsub("#[^\n\r]*", "") -- remove comments
 	local seeds,inputs = str:match("%[([^%]]*)%](.*)")
 	if not seeds then -- try loading without rng seeds
 		return self.super.load_input_str(self, str, i)
 	elseif not inputs then
 		print("invalid input file")
-		return false
+		return
 	end
 
 	local seeds_tbl={}
@@ -662,17 +663,18 @@ function cctas:load_input_str(str, i)
 	for seed in seeds:gmatch("[^,]+") do
 		if tonumber(seed) == nil then
 			print("invalid input file")
-			return false
+			return
 		else
 			table.insert(seeds_tbl, tonumber(seed))
 		end
 	end
 
-	if not self.super.load_input_str(self, inputs, i) then
-		return false
+	local cnt = self.super.load_input_str(self, inputs, i)
+	if not cnt then
+		return
 	end
 	self:load_rng_seeds(seeds_tbl)
-	return true
+	return cnt
 end
 
 function cctas:save_cleaned_input_file(last_frame)
