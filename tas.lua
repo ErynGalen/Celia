@@ -985,7 +985,7 @@ end
 --i is the index to insert the inputs at
 --if i is nil, the current inputs will be replaced by the new ones
 function tas:load_input_str(input_str, i)
-	input_str = input_str:gsub("#[^\n]+", "") -- remove comments
+	input_str = input_str:gsub("#[^\n\r]*", "") -- remove comments
 	local new_inputs={}
 	for input in input_str:gmatch("[^,]+") do
 		local keys, mouse_x, mouse_y, mouse_mask = input:match("(%d+):(%d+):(%d+):(%d+)")

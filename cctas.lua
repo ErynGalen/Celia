@@ -669,7 +669,7 @@ function cctas:get_input_str(i,j, include_seeds)
 end
 
 function cctas:load_input_str(str, i)
-	str = str:gsub("#[^\n]+", "") -- remove comments
+	str = str:gsub("#[^\n\r]*", "") -- remove comments
 	local seeds,inputs = str:match("%[([^%]]*)%](.*)")
 	if not seeds then -- try loading without rng seeds
 		return self.super.load_input_str(self, str, i)
