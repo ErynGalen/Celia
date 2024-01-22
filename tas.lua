@@ -988,17 +988,6 @@ function tas:load_input_str(input_str, i)
 	input_str = input_str:gsub("#[^\n]+", "") -- remove comments
 	local new_inputs={}
 	for input in input_str:gmatch("[^,]+") do
-		local keys = input:match("%d+")
-		if tonumber(keys) == nil then
-			print("invalid input file")
-			return
-		else
-			table.insert(new_inputs, tonumber(keys))
-		end
-	end
-	input_str = new
-	local new_inputs={}
-	for input in input_str:gmatch("[^,]+") do
 		local keys, mouse_x, mouse_y, mouse_mask = input:match("(%d*):(%d*):(%d*):(%d*)")
 		if keys == nil then
 			keys = input:match("%d*") -- try the old input format
