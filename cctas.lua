@@ -184,6 +184,8 @@ function cctas:keypressed(key, isrepeat)
 		if p then
 			love.system.setClipboardText(tostring(p))
 		end
+	elseif key=='l' and love.keyboard.isDown('lalt', 'ralt') then
+		self:goto_player_control()
 	else
 		self.super.keypressed(self,key,isrepeat)
 	end
@@ -509,6 +511,50 @@ function cctas:player_rewind()
 	end
 end
 
+-- return {
+--	no_control,
+--	freeze,
+--	wall_dir,
+--	can_jump,
+--	can_dash,
+-- }
+function cctas:player_info()
+	local p = self:find_player()
+	if not p then
+		return true, nil
+	end
+	local info = {
+		no_control = p.pause_player or p.dash_time > 0,
+		wall_dir = p.is_solid(-3,0) and -1 or p.is_solid(3,0) and 1 or 0,
+		freeze = pico8.cart.freeze,
+		can_jump = p.grace > 0,
+		can_dash = p.djump > 0,
+	}
+
+	local can_act = not info.no_control and (
+		info.wall_dir ~= 0
+		or info.can_jump
+		or info.can_dash
+		or math.abs(p.spd.x) <= 1
+	)
+
+	return can_act, info
+end
+
+function cctas:goto_player_control()
+	self.seek = {
+		finish_condition = function()
+			local can_act, _ = self:player_info()
+			return can_act
+		end,
+		on_finish = function()
+			self:state_changed()
+			self:reset_editor_state()
+		end,
+		fast_forward = true,
+	}
+end
+
 function cctas:start_gif_recording()
 	if start_gif_recording() then
 		start_gif_recording()
@@ -722,7 +768,33 @@ function cctas:hud()
 		return ""
 	end
 	--TODO: make this more comprehensive and/or general?
-	return ("%6s%7s\npos:% -7g% g\nrem:% -7.3f% .3f\nspd:% -7.3f% .3f\n\ngrace: %s"):format("x","y",p.x,p.y,p.rem.x,p.rem.y, p.spd.x, p.spd.y, p.grace)
+	local hud = ("%6s%7s\npos:% -7g% g\nrem:% -7.3f% .3f\nspd:% -7.3f% .3f\n\ngrace: %s"):format("x","y",p.x,p.y,p.rem.x,p.rem.y, p.spd.x, p.spd.y, p.grace)
+
+	local can_act, player_info = self:player_info()
+	if not player_info then
+		return hud
+	end
+	hud = hud .. "\n"
+
+	if player_info.can_jump then
+		hud = hud .. "\ncan jump"
+	end
+	if player_info.can_dash then
+		hud = hud .. "\ncan dash"
+	end
+	hud = hud .. ("\nwalldir: %d\n"):format( player_info.wall_dir)
+
+	if player_info.freeze > 0 then
+		hud = hud .. ("\nfreeze: %d"):format(player_info.freeze)
+	end
+
+	if player_info.no_control then
+		hud = hud .. "\nno control"
+	end
+	if not can_act then
+		hud = hud .. "\nno input"
+	end
+	return hud
 end
 
 function cctas:offset_camera()
